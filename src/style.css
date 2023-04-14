@@ -1,0 +1,33 @@
+body{
+  padding:0;
+  margin:0;
+}
+#settingsbutton{
+  position:fixed;
+  left:5px;
+  bottom:5px;
+}
+.fa-icon{
+  width:25px;
+  height:25px;
+}
+
+#settingspanel{
+  border-radius:5px;
+  background-color:#51576d;
+  opacity:0.9;
+  position:fixed;
+  width:75%;
+  height:75%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  padding: 1em;
+}
+#settingspanel > p{
+  color:#c6d0f5;
+}
+.header{
+  font-size: 1.5em;
+  text-align: center;
+}
