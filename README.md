@@ -6,6 +6,9 @@ be that a buggy and incomplete terminal emulator implementation, convoluted meth
 
 thus, i'll do it myself, with hterm and catppuccin
 
+![image](https://user-images.githubusercontent.com/58010778/232152436-0b712641-69f0-43de-a336-40256ea5a755.png)
+![image](https://user-images.githubusercontent.com/58010778/232154454-d2dcd9db-4376-4033-8000-fa9b2c7ddc6a.png)
+
 ## features
 this is a very minimal implementation, built to fit my needs and not much more.
 - the full power of [hterm.js](https://hterm.org/), a fully complete emulator unlike some other inferior ones that i won't mention ([cough cough](http://xtermjs.org/))
@@ -14,6 +17,14 @@ this is a very minimal implementation, built to fit my needs and not much more.
 - authentication (see below)
 - file transfer
 
+## installation
+```
+git clone https://github.com/CoolElectronics/tiTTY
+cd tiTTY
+npm i
+nvim .env # edit stuff
+npx ts-node main.ts
+```
 ## configuration
 the following environment variables can be set in .env or as normal
 
