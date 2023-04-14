@@ -5,6 +5,7 @@ You would think that with an idea as simple as this, there would already be plen
 be that a buggy and incomplete terminal emulator implementation, convoluted methods of authentication, or just being slow in general.
 
 thus, i'll do it myself, with hterm and catppuccin
+![image](https://user-images.githubusercontent.com/58010778/232152436-0b712641-69f0-43de-a336-40256ea5a755.png)
 
 ## features
 this is a very minimal implementation, built to fit my needs and not much more.
