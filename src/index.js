@@ -1,16 +1,8 @@
-var t = new hterm.Terminal();
-t.decorate(document.querySelector('#terminal'));
-
-if (!localStorage.getItem("visited")) {
-  localStorage.setItem("stun", "stun:stun.l.google.com:19302");
-  localStorage.setItem("usewebrtc", true);
-  localStorage.setItem("visited", true);
-}
 
 const rtcConf = {
   iceServers: [
     {
-      urls: localStorage.getItem("stun"),
+      urls: localStorage.getItem("_x_stun").replaceAll('"', ''),
     },
   ],
 };
@@ -106,48 +98,56 @@ async function wsConnect(ttyint) {
   }
 }
 
-t.onTerminalReady = async () => {
-  t.setBackgroundColor("#292c3c");
-  const io = t.io.push();
-  const log = msg => {
-    t.io.println(`tiTTY LOG: ${msg}`);
+addEventListener("load", () => {
+  var t = new hterm.Terminal();
+  t.decorate(document.querySelector('#terminal'));
+
+  t.onTerminalReady = async () => {
+    t.setBackgroundColor("#292c3c");
+    t.prefs_.set("font-family", '"DejaVu Sans Mono", "Noto Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, FiraCode Nerd Font, monospace')
+    t.prefs_.set('user-css', 'https://mshaugh.github.io/nerdfont-webfonts/build/firacode-nerd-font.css');
+    const io = t.io.push();
+    const log = msg => {
+      t.io.println(`tiTTY LOG: ${msg}`);
+    }
+
+    const ondata = (data) => {
+      t.io.print(data);
+    }
+    const ondisconnect = () => {
+      log("disconnected from server");
+    }
+    const onconnect = () => {
+      log("connected to server");
+      t.installKeyboard();
+    }
+
+    let ttyint = {
+      ondata,
+      onconnect,
+      ondisconnect,
+      cols: t.screenSize.width - 1,
+      rows: t.screenSize.height - 1
+    }
+
+    let channel = localStorage.getItem("_x_usewebrtc") == "true" ?
+      await rtcConnect(ttyint) :
+      await wsConnect(ttyint);
+
+
+    document.querySelector("#terminal").addEventListener("resize", () => {
+      channel.resize(t.screenSize.width, t.screenSize.height);
+    });
+    new ResizeObserver(() =>
+      channel.resize(t.screenSize.width, t.screenSize.height)
+    ).observe(document.querySelector("#terminal"));
+    io.onVTKeystroke = (str) => {
+      channel.send(str);
+    }
+    io.sendString = str => {
+      channel.send(str);
+    }
   }
 
-  const ondata = (data) => {
-    t.io.print(data);
-  }
-  const ondisconnect = () => {
-    log("disconnected from server");
-  }
-  const onconnect = () => {
-    log("connected to server");
-    t.installKeyboard();
-  }
-
-  let ttyint = {
-    ondata,
-    onconnect,
-    ondisconnect,
-    cols: t.screenSize.width - 1,
-    rows: t.screenSize.height - 1
-  }
-
-  let channel = localStorage.getItem("usewebrtc") ?
-    await rtcConnect(ttyint) :
-    wsConnect(ttyint);
-
-
-  document.querySelector("#terminal").addEventListener("resize", () => {
-    channel.resize(t.screenSize.width, t.screenSize.height);
-  });
-  new ResizeObserver(() =>
-    channel.resize(t.screenSize.width, t.screenSize.height)
-  ).observe(document.querySelector("#terminal"));
-  io.onVTKeystroke = (str) => {
-    channel.send(str);
-  }
-  io.sendString = str => {
-    channel.send(str);
-  }
-}
+})
 

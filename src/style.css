@@ -26,8 +26,16 @@ body{
 }
 #settingspanel > p{
   color:#c6d0f5;
+  font-family: "Noto Sans";
 }
 .header{
   font-size: 1.5em;
   text-align: center;
+}
+input{
+  color:#c6d0f5;
+  background-color:#232634;
+  outline:none;
+  border:none;
+  border-radius: 2.5px;
 }

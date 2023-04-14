@@ -9,7 +9,7 @@ import * as NodePty from "node-pty";
 const configuration = {
   iceServers: [
     {
-      urls: 'stun:global.stun.twilio.com:3478',
+      urls: "stun:stun.l.google.com:19302",
     },
   ],
 };
@@ -94,12 +94,10 @@ app.post('/connectrtc', async (req, res) => {
     console.log('ICE gathering state:', peer.iceGatheringState);
   };
   peer.onicecandidate = (event: any) => {
-    // Step 6. Gathering local ICE candidates
     if (event.candidate) {
       localCandidates.push(event.candidate);
       return;
     }
-    // Step 7. Response with Answer and server candidates
     let payload = {
       answer: peer.localDescription,
       candidates: localCandidates,

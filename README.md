@@ -1,4 +1,4 @@
-# tiTTY - the better remote terminal
+# tiTTY - a better remote terminal
 
 ## why did i create this?
 You would think that with an idea as simple as this, there would already be plenty of implementations. and while there are, each have their own unique problems,
@@ -17,8 +17,8 @@ this is a very minimal implementation, built to fit my needs and not much more.
 ## configuration
 the following environment variables can be set in .env or as normal
 
-- port= - the port the server will listen on
-- tty_shell= - the program that the tty will launch. this should usually be set to /bin/bash
+- PORT= - the port the server will listen on
+- TTY_SHELL= - the program that the tty will launch. this should usually be set to /bin/bash
 yes, these are the only options. if you want more fork it
 
 ## authentication
@@ -31,4 +31,5 @@ if you're lazy and don't feel like setting up anything, you can run the server a
 
 ### credits
 - hterm.js
+- https://github.com/mshaugh/nerdfont-webfonts
 - favicon is the [whiskers](https://github.com/samholmes/whiskers) icon because i didn't feel like making my own
