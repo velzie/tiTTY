@@ -21,6 +21,7 @@ this is a very minimal implementation, built to fit my needs and not much more.
 ```
 git clone https://github.com/CoolElectronics/tiTTY
 cd tiTTY
+npm i
 nvim .env # edit stuff
 npx ts-node main.ts
 ```
