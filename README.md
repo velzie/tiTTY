@@ -15,6 +15,13 @@ this is a very minimal implementation, built to fit my needs and not much more.
 - authentication (see below)
 - file transfer
 
+## installation
+```
+git clone https://github.com/CoolElectronics/tiTTY
+cd tiTTY
+nvim .env # edit stuff
+npx ts-node main.ts
+```
 ## configuration
 the following environment variables can be set in .env or as normal
 
