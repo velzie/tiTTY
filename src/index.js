@@ -1,8 +1,9 @@
-
+const ESC = "\x1B";
+const CR = "\x0D";
 const rtcConf = {
   iceServers: [
     {
-      urls: localStorage.getItem("_x_stun").replaceAll('"', ''),
+      urls: localStorage.getItem("_x_stun")?.replaceAll('"', ''),
     },
   ],
 };
@@ -97,6 +98,50 @@ async function wsConnect(ttyint) {
     close: socket.disconnect.bind(socket),
   }
 }
+// format is rgb
+function ansiFBG(fg, bg) {
+  let fgs = fg ? `${ESC}[38;2;${fg[0]};${fg[1]};${fg[2]}m` : ""
+  let bgs = bg ? `${ESC}[48;2;${bg[0]};${bg[1]};${bg[2]}m` : ""
+  return fgs + bgs;
+}
+// https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+function HSVtoRGB(hsv) {
+  let [h, s, v] = hsv;
+  h /= 255;
+  s /= 255;
+  v /= 255;
+  var r, g, b, i, f, p, q, t;
+
+  i = Math.floor(h * 6);
+  f = h * 6 - i;
+  p = v * (1 - s);
+  q = v * (1 - f * s);
+  t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+    case 0: r = v, g = t, b = p; break;
+    case 1: r = q, g = v, b = p; break;
+    case 2: r = p, g = v, b = t; break;
+    case 3: r = p, g = q, b = v; break;
+    case 4: r = t, g = p, b = v; break;
+    case 5: r = v, g = p, b = q; break;
+  }
+  return [
+    Math.round(r * 255),
+    Math.round(g * 255),
+    Math.round(b * 255)
+  ];
+}
+function rainbowText(text) {
+  let h = 0;
+  let interval = 255 / text.length * 2;
+
+  let str = "";
+  for (let chr of text.split('')) {
+    str += ansiFBG(HSVtoRGB([h, 255, 255])) + chr;
+    h += interval;
+  }
+  return str;
+}
 
 addEventListener("load", () => {
   var t = new hterm.Terminal();
@@ -108,7 +153,7 @@ addEventListener("load", () => {
     t.prefs_.set('user-css', 'https://mshaugh.github.io/nerdfont-webfonts/build/firacode-nerd-font.css');
     const io = t.io.push();
     const log = msg => {
-      t.io.println(`tiTTY LOG: ${msg}`);
+      t.io.println(`${CR}${ansiFBG([255, 0, 255])}[tiTTY LOG]: ${msg}${ESC}[0m`);
     }
 
     const ondata = (data) => {
@@ -120,6 +165,30 @@ addEventListener("load", () => {
     const onconnect = () => {
       log("connected to server");
       t.installKeyboard();
+      io.onVTKeystroke = (str) => {
+        channel.send(str);
+        console.log(str);
+      }
+      io.sendString = str => {
+        channel.send(str);
+        console.log(str);
+      }
+
+      let old_w, old_h;
+      let doresize = () => {
+        let [w, h] = [t.screenSize.width, t.screenSize.height];
+        channel.resize(w, h);
+        [old_w, old_h] = [w, h];
+      }
+
+      document.querySelector("#terminal").addEventListener("resize", doresize);
+      new ResizeObserver(doresize).observe(document.querySelector("#terminal"));
+      // and for some fucking reason, both these ^^^ don't like to fire sometimes so 
+      setInterval(() => {
+        let [w, h] = [t.screenSize.width, t.screenSize.height];
+        if (w != old_w || h != old_h)
+          doresize();
+      }, 100);
     }
 
     let ttyint = {
@@ -134,20 +203,14 @@ addEventListener("load", () => {
       await rtcConnect(ttyint) :
       await wsConnect(ttyint);
 
-
-    document.querySelector("#terminal").addEventListener("resize", () => {
-      channel.resize(t.screenSize.width, t.screenSize.height);
-    });
-    new ResizeObserver(() =>
-      channel.resize(t.screenSize.width, t.screenSize.height)
-    ).observe(document.querySelector("#terminal"));
-    io.onVTKeystroke = (str) => {
-      channel.send(str);
-    }
-    io.sendString = str => {
-      channel.send(str);
-    }
+    window._log = log;
+    window._term = t;
   }
-
 })
+
+async function activatefullscreen() {
+  await document.documentElement.requestFullscreen();
+  await navigator.keyboard.lock();
+}
+
 

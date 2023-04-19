@@ -13,6 +13,11 @@ body{
 }
 
 #settingspanel{
+  position:fixed;
+  width:100%;
+  height:100%;
+}
+#settingspanel-inner{
   border-radius:5px;
   background-color:#51576d;
   opacity:0.9;
@@ -24,9 +29,16 @@ body{
   transform:translate(-50%,-50%);
   padding: 1em;
 }
-#settingspanel > p{
+#settingspanel p,input, button{
   color:#c6d0f5;
-  font-family: "Noto Sans";
+  font-family: "DejaVu Sans Mono", "Noto Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, FiraCode Nerd Font, monospace;
+}
+#settingspanel button{
+  background-color:#232634;
+  outline:none;
+  border:none;
+  border-radius:5px;
+  font-size: 1em;
 }
 .header{
   font-size: 1.5em;
@@ -37,5 +49,6 @@ input{
   background-color:#232634;
   outline:none;
   border:none;
+  font-size: 1em;
   border-radius: 2.5px;
 }
